@@ -1,6 +1,6 @@
 # Storygraph to Obsidian
 
-Welcome to **Storygraph to Obsidian**, a super niche app that probably only I will ever use. Though if you also use **The Storygraph** for tracking your books and **Obsidian** for notes, and have thought about the process of creating book notes, boy are you in luck.
+Welcome to **Storygraph to Obsidian**, a super niche app that probably only I will ever use. Though if you also use **The Storygraph** for tracking your books and **Obsidian** for notes, and have thought about automating the process of creating book notes, boy are you in luck.
 
 ![](https://i.imgur.com/6pUIrfW.gif)
 
