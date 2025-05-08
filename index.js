@@ -1,25 +1,33 @@
 const express = require('express');
-const axios = require('axios');
+const { request } = require('undici');
 const cheerio = require('cheerio');
 require('dotenv').config();
 
 const app = express();
-
 const vaultNameEnv = process.env.OBSIDIAN_VAULT;
 const subfolderEnv = process.env.OBSIDIAN_SUBFOLDER;
 
 app.get('/storygraph-to-obsidian', async (req, res) => {
 	const { url } = req.query;
-
 	if (!url) {
 		return res.status(400).send('No URL provided');
 	}
 
 	try {
-		const { data } = await axios.get(url);
+		const response = await request(url, {
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+				'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+				'Accept-Language': 'en-US,en;q=0.5',
+				'Referer': 'https://app.thestorygraph.com/',
+				'Cache-Control': 'max-age=0'
+			}
+		});
+
+		const data = await response.body.text();
 		const $ = cheerio.load(data);
 
-		// Extract the book title (text directly inside the h3 tag, excluding any child HTML)
+		// Extract the book title
 		let title = $('.book-title-author-and-series h3').contents().filter(function() {
 			return this.type === 'text';
 		}).text().trim();
@@ -28,7 +36,7 @@ app.get('/storygraph-to-obsidian', async (req, res) => {
 		title = title.split(':')[0].trim();
 		title = title.split('\n')[0].trim();
 
-		// Extract the authors' names from anchor tags inside the p tag with authors in the href
+		// Extract the authors' names
 		const authors = [];
 		$('.book-title-author-and-series h3 p a').each(function() {
 			const href = $(this).attr('href') || '';
@@ -37,7 +45,7 @@ app.get('/storygraph-to-obsidian', async (req, res) => {
 			}
 		});
 
-		// Ensure unique authors and join them into a comma-separated string
+		// Ensure unique authors and join them
 		const uniqueAuthors = [...new Set(authors)];
 		const authorString = uniqueAuthors.join(', ');
 
@@ -48,7 +56,7 @@ app.get('/storygraph-to-obsidian', async (req, res) => {
 		const subfolder = subfolderEnv ? `${subfolderEnv}/` : '';
 		const filePath = encodeURIComponent(`${subfolder}${noteTitle}`);
 
-		// Construct the note content with YAML frontmatter and bulleted list
+		// Construct the note content with YAML frontmatter
 		const content = encodeURIComponent(`---\nstatus: Unread\n---\n- `);
 
 		// Construct the Obsidian deep link
@@ -56,7 +64,10 @@ app.get('/storygraph-to-obsidian', async (req, res) => {
 
 		res.send(obsidianLink);
 	} catch (error) {
-		console.log(error);
+		console.error('Error details:', {
+			message: error.message,
+			stack: error.stack
+		});
 		res.status(500).send('Failed to fetch book details');
 	}
 });
