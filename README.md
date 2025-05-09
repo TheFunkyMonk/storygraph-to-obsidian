@@ -1,7 +1,7 @@
 # Storygraph to Obsidian
 
 > [!IMPORTANT]
-> Unfortunately, The Storygraph has recently implemented Cloudflare protection that prevents this from working. I've reached out to them to see if they can lighten up their scraping protections because it's even broken metadata previews in iOS Messages and other platforms, and will update this accordingly if it's able to work again.
+> Unfortunately, The Storygraph had to implement strict Cloudflare scraping protection due to recent DDoS attacks that breaks this script (along with metadata previews in other applications). I've reached out to them and will update once things have been sorted out.
 
 Welcome to **Storygraph to Obsidian**, a super niche app that probably only I will ever use. Though if you also use **The Storygraph** for tracking your books and **Obsidian** for notes, and have thought about automating the process of creating book notes, boy are you in luck.
 
